@@ -5,7 +5,9 @@ dotenv.config();
 class Server {
   private app: Application;
   private port: string | undefined;
-  private apiPaths = {};
+  private apiPaths = {
+    
+  };
 
   constructor() {
     this.app = express();
@@ -18,7 +20,10 @@ class Server {
     this.app.use(express.json());
   }
 
-  routes() {}
+  routes() {
+
+  }
+
   listen() {
     this.app.listen(this.port, () => {
       console.log(`Localhost: ${this.port}`);
