@@ -5,6 +5,7 @@ import {
   IconButton,
   Typography,
   InputBase,
+  Button,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
@@ -42,7 +43,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up("xl")]: {
       width: "12ch",
       "&:focus": {
         width: "20ch",
@@ -82,6 +83,16 @@ export default function SearchAppBar() {
               inputProps={{ "aria-label": "search" }}
             />
           </Search>
+          <Button
+            color="inherit"
+          >
+            Únete
+          </Button>
+          <Button
+            color="inherit"
+          >
+            Iniciar sesión
+          </Button>
         </Toolbar>
       </AppBar>
     </Box>

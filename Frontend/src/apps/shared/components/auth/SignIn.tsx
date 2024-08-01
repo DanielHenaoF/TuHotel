@@ -1,9 +1,10 @@
-import React from "react";
+import { FC, useState, FormEvent, ChangeEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Avatar,
   Button,
-  Checkbox,
-  FormControlLabel,
+  // Checkbox,
+  // FormControlLabel,
   Link,
   Grid,
   CssBaseline,
@@ -30,14 +31,64 @@ function Copyright(props: any) {
 
 const defaultTheme = createTheme();
 
-export default function Auth() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+type SignInProps = object & {
+  value?: any;
+  onChange?: (value: any | null) => void;
+};
+
+const Auth: FC<SignInProps> = ({ value }) => {
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState<{
+    email?: string;
+    password_user?: string;
+  } | null>(null);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("Correo electrónico"),
-      password: data.get("Contraseña"),
-    });
+    event.stopPropagation();
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await response.json();
+      console.log("Response", data);
+
+      navigate("/");
+      // const { token } = data.data;
+      // window.localStorage.setItem("Token", token);
+    } catch (error) {
+      console.error("Error", error);
+    }
+  };
+
+  const handleEmail = (event: ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const value = event?.target?.value ?? null;
+
+    setUserData((previousState) => ({
+      ...previousState,
+      email: value,
+    }));
+  };
+
+  const handlePassword = (event: ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const value = event?.target?.value ?? null;
+
+    setUserData((previousState) => ({
+      ...previousState,
+      password_user: value,
+    }));
   };
 
   return (
@@ -73,6 +124,8 @@ export default function Auth() {
               name="email"
               autoComplete="email"
               autoFocus
+              onChange={handleEmail}
+              value={value}
             />
             <TextField
               margin="normal"
@@ -83,11 +136,13 @@ export default function Auth() {
               type="password"
               id="password"
               autoComplete="current-password"
+              onChange={handlePassword}
+              value={value}
             />
-            <FormControlLabel
+            {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Recuérdame"
-            />
+            /> */}
             <Button
               type="submit"
               fullWidth
@@ -114,4 +169,6 @@ export default function Auth() {
       </Container>
     </ThemeProvider>
   );
-}
+};
+
+export default Auth;

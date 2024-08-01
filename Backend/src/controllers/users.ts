@@ -8,6 +8,14 @@ export const saveUsers = async (req: Request, res: Response) => {
   const salt = bcryptjs.genSaltSync();
   password_user = bcryptjs.hashSync(password_user, salt);
 
+  const existenteUser = await User.findOne({ where: { email } });
+  if (existenteUser) {
+    return res.status(400).json({
+      success: false,
+      msg: "El usuario ya se encuentra registrado",
+    });
+  }
+
   const user = await User.create({
     first_name,
     last_name,
@@ -17,6 +25,6 @@ export const saveUsers = async (req: Request, res: Response) => {
 
   const id = user.dataValues.id;
   res.status(200).json({
-    msg: `Se registro un nuevo usuario con id: ${id}`,
+    msg: `Se registro exitosamente con id: ${id}`,
   });
 };

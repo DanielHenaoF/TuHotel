@@ -1,4 +1,6 @@
-import { ChangeEvent, FC, useState, FormEvent } from "react";
+import { ChangeEvent, FC, useState, FormEvent, useRef } from "react";
+import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
 import {
   Avatar,
   Button,
@@ -33,6 +35,7 @@ type SignUpProps = object & {
 };
 
 const SignUp: FC<SignUpProps> = ({ value }) => {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState<{
     first_name?: string;
     last_name?: string;
@@ -40,13 +43,13 @@ const SignUp: FC<SignUpProps> = ({ value }) => {
     password_user?: string;
   } | null>(null);
 
-  const [, setLoading] = useState<boolean>(false);
+  const snackbarRef = useRef<string | number | null>(null);
+
+  const { closeSnackbar, enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     event.stopPropagation();
-
-    setLoading(true);
 
     try {
       const response = await fetch(
@@ -59,12 +62,31 @@ const SignUp: FC<SignUpProps> = ({ value }) => {
           body: JSON.stringify(userData),
         }
       );
+
       const data = await response.json();
-      console.log("Response", data);
+      if ("success" in data && !data.success) {
+        const { msg } = data;
+
+        if (snackbarRef.current) closeSnackbar(snackbarRef.current);
+
+        snackbarRef.current = enqueueSnackbar(
+          msg ? msg : "Ocurrio un error en el servidor. Reintentar",
+          {
+            variant: "error",
+          }
+        );
+
+        if (snackbarRef.current) closeSnackbar(snackbarRef.current);
+
+        snackbarRef.current = enqueueSnackbar("El usuario ha iniciado sesion");
+        navigate("/login");
+      }
     } catch (error) {
-      console.log("Error", error);
-    } finally {
-      setLoading(false);
+      if (snackbarRef.current) closeSnackbar(snackbarRef.current);
+
+      snackbarRef.current = enqueueSnackbar("Ocurrio un error inesperado", {
+        variant: "error",
+      });
     }
   };
 

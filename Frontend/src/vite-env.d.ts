@@ -1,4 +1,4 @@
-<reference types="vite/client" />;
+/// <reference types="vite/client" />;
 
 interface importMetaEnv {
   readonly VITE_BACKEND_URL: string;

@@ -1,16 +1,21 @@
 import { FC } from "react";
+import { SnackbarProvider } from "notistack";
 import { RouterProvider } from "react-router-dom";
 import Router from "./apps/shared/routes/AppRouter";
+
+const FIVE_SECONDS_IN_MS = 5000;
 
 type AppProps = object;
 
 const App: FC<AppProps> = () => {
   return (
-    <RouterProvider router={Router} />
+    <SnackbarProvider preventDuplicate autoHideDuration={FIVE_SECONDS_IN_MS}>
+      <RouterProvider router={Router} />
+    </SnackbarProvider>
   );
 };
 
-export default App
+export default App;
 
 // type UserProps = {
 //   id: number;
@@ -19,7 +24,7 @@ export default App
 // };
 
 // <RouterProvider router={AppRoutes}>
-  
+
 //     <Auth />
 
 // </RouterProvider>
